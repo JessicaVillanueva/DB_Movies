@@ -258,5 +258,16 @@ BEGIN
 	INSERT INTO comments(comment, date, movie_id, user_id) VALUES (comments, NOW(), id_movie, id_user);
 END $$
 DELIMITER ;
-
+-- Ejemplo de como se llama al procedimiento almacenado y los parametros que lleva
 CALL ADD_COMMENT("no me gustó la peli", 3, 1);
+
+
+-- Vista para mostrar la pelicula y comentarios
+DROP VIEW V_MOVIE_COMMENTS_DETAILS;
+CREATE VIEW V_MOVIE_COMMENTS_DETAILS AS
+SELECT c.comment, DATE_FORMAT(c.date,'%d/%m/%Y') AS "date_comment" , concat_ws(" ", u.name, u.ln_paternal) as "name_user", movie_id FROM comments c
+INNER JOIN users u ON u.id = c.user_id;
+-- Ejemplo de como llamar a la vista
+SELECT * FROM V_MOVIE_COMMENTS_DETAILS;
+
+
