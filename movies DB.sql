@@ -22,6 +22,7 @@ CREATE TABLE users(
 CREATE TABLE comments(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     comment VARCHAR(256) NOT NULL,
+    date datetime NOT NULL,
     movie_id INT NOT NULL,
     CONSTRAINT FK_MOVIE_ID_MOVIE FOREIGN KEY(movie_id)
     REFERENCES movies(id) ON DELETE CASCADE,
@@ -241,9 +242,21 @@ their parents decades ago.', 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/9R
 INSERT INTO users(email, password, name, ln_paternal, ln_maternal) VALUES
 ('software@software.com', '123456', 'software', 'software', null);
 
-INSERT INTO comments(comment, movie_id, user_id) VALUES
-('me encantar ATL', '1', '1');
+INSERT INTO comments(comment, date, movie_id, user_id) VALUES
+('me encantar ATL', NOW(),'1', '1');
 
 SELECT * FROM movies;
 SELECT * FROM users;
 SELECT * FROM comments;
+
+
+
+-- Procedimiento almacenado para crear comentarios
+DELIMITER $$
+CREATE PROCEDURE ADD_COMMENT(IN comments VARCHAR(256), IN id_movie INT, IN id_user INT)
+BEGIN
+	INSERT INTO comments(comment, date, movie_id, user_id) VALUES (comments, NOW(), id_movie, id_user);
+END $$
+DELIMITER ;
+
+CALL ADD_COMMENT("no me gustó la peli", 3, 1);
