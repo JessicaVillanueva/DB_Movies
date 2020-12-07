@@ -34,11 +34,16 @@ CREATE TABLE comments(
 CREATE TABLE likes(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     likes INT,
-    dislile INT,
+    dislike INT,
     movie_id INT NOT NULL,
-    user_id INT NOT NULL
+    CONSTRAINT FK_MOVIE_ID_MOVIE FOREIGN KEY(movie_id)
+    REFERENCES movies(id) ON DELETE CASCADE,
+    user_id INT NOT NULL,
+    CONSTRAINT FK_USER_ID_USER FOREIGN KEY(user_id)
+    REFERENCES users(id) ON DELETE CASCADE
 );
 
+/*DROP TRIGGER T_BI_USERS_PASSWORS;
 DELIMITER $$
 CREATE TRIGGER T_BI_USERS_PASSWORS
 BEFORE INSERT ON users
@@ -46,7 +51,7 @@ FOR EACH ROW
 BEGIN
     SET NEW.password = SHA1(NEW.password);
 END$$
-DELIMITER ;
+DELIMITER ;*/
 
 
 INSERT INTO movies(title, date_year, synopsis, image) VALUES
@@ -240,7 +245,7 @@ Hunger Games (The Quarter Quell) - a competition that could change Panem forever
 their parents decades ago.', 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/9Rj8l6gElLpRL7Kj17iZhrT5Zuw.jpg');
 
 INSERT INTO users(email, password, name, ln_paternal, ln_maternal) VALUES
-('software@software.com', '123456', 'software', 'software', null);
+('software2@software.com', SHA1('123456'), 'software', 'software', null);
 
 INSERT INTO comments(comment, date, movie_id, user_id) VALUES
 ('me encantar ATL', NOW(),'1', '1');
@@ -261,13 +266,14 @@ DELIMITER ;
 -- Ejemplo de como se llama al procedimiento almacenado y los parametros que lleva
 CALL ADD_COMMENT("no me gustó la peli", 3, 1);
 
+select * from comments;
 
--- Vista para mostrar la pelicula y comentarios
+
+-- Vista para mostrar comentarios de la peli
 DROP VIEW V_MOVIE_COMMENTS_DETAILS;
 CREATE VIEW V_MOVIE_COMMENTS_DETAILS AS
 SELECT c.id, c.comment, DATE_FORMAT(c.date,'%d/%m/%Y') AS "date_comment" , concat_ws(" ", u.name, u.ln_paternal) as "name_user", movie_id FROM comments c
 INNER JOIN users u ON u.id = c.user_id;
 -- Ejemplo de como llamar a la vista
 SELECT * FROM V_MOVIE_COMMENTS_DETAILS;
-
 
