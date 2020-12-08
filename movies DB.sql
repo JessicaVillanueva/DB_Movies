@@ -244,6 +244,27 @@ DELIMITER ;
 CALL LIKE_DISLIKE('dislike', 3, 1);
 SELECT * FROM likes;
 
+INSERT INTO users(email, password, name, ln_paternal, ln_maternal) VALUES
+('apisoft@software.com', SHA1('2468'), 'api', 'software', null);
+CALL LIKE_DISLIKE('like', '3', '2');
+CALL LIKE_DISLIKE('like', '3', '1');
 
+-- mostrar likes por película
+DROP VIEW V_COUNT_LIKES_MOVIES;
+CREATE VIEW V_COUNT_LIKES_MOVIES AS
+SELECT m.id, m.title AS "movie_title", COUNT(l.criterio) AS "likes", movie_id FROM movies m
+INNER JOIN likes l ON l.movie_id = m.id
+WHERE l.criterio = 'like';
+SELECT * FROM V_COUNT_LIKES_MOVIES;
 
+CALL LIKE_DISLIKE('dislike', '5', '2');
+CALL LIKE_DISLIKE('dislike', '4', '1');
+
+-- mostrar dislikes por película
+DROP VIEW V_COUNT_DISLIKES_MOVIES;
+CREATE VIEW V_COUNT_DISLIKES_MOVIES AS
+SELECT m.id, m.title AS "movie_title", COUNT(l.criterio) AS "dislikes", movie_id FROM movies m
+INNER JOIN likes l ON l.movie_id = m.id
+WHERE l.criterio = 'dislike';
+SELECT * FROM V_COUNT_DISLIKES_MOVIES;
 
