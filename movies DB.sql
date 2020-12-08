@@ -247,5 +247,3 @@ SELECT * FROM likes;
 
 
 
-
-
